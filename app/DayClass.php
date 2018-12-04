@@ -9,7 +9,7 @@ class DayClass
 
     public function getInput()
     {
-        $fh = fopen($this->filepath, 'r');
+        $fh = fopen(storage_path('sources' . DIRECTORY_SEPARATOR .  $this->filepath), 'r');
         $lines = [];
         while(($buff = fgets($fh)) !== false){
             $lines[] = $buff;

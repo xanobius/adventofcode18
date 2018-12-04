@@ -15,4 +15,4 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('2015/{day}', 'AdventController@getDayResult');
+$router->get('2015/{day}/{second}', 'AdventController@getDayResult');
