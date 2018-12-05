@@ -16,3 +16,4 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('2015/{day}/{second}', 'AdventController@getDayResult');
+$router->get('2018/{day}/{second}', 'Advent2018Controller@getDayResult');
