@@ -14,9 +14,6 @@ class Eight extends DayClass
 
     public function primary()
     {
-        // to high: 10599
-        // Correct: 10598 (duuude, the first one already was, but with a whitespace)
-
         set_time_limit(60);
         $inputs = $this->getInput()[0];
         $this->inputs = explode(' ', $inputs);
@@ -34,8 +31,49 @@ class Eight extends DayClass
 
     public function secondary()
     {
-        $input = $this->getInput();
-        return;
+        $inputs = $this->getInput()[0];
+        $this->inputs = explode(' ', $inputs);
+        for($i = 0; $i < count($this->inputs); $i++){
+            $this->inputs[$i] = (int)$this->inputs[$i];
+        }
+        $f = $this->getNodeValue(0);
+        return $f;
+    }
+
+
+    private function getNodeValue($start)
+    {
+        $children = $this->inputs[$start];
+        $metadatas = $this->inputs[$start + 1];
+        $value = 0;
+
+        if($children == 0){
+            for($i = $start + 2; $i < $start + 2 + $metadatas; $i++){
+                $value += $this->inputs[$i];
+            }
+            return [
+                2 + $metadatas,
+                $value
+            ];
+        }else{
+            $offset = 0;
+            $babies = [];
+            for($i = 0; $i < $children; $i++){
+                $babies[] =  $this->getNodeValue($start + 2 + $offset);
+                $offset = $offset + $babies[count($babies) - 1][0];
+            }
+
+            for($i = $start + 2 + $offset; $i < $start + 2 + $offset + $metadatas; $i++){
+                if(count($babies) >= $this->inputs[$i]){
+                    $value += $babies[($this->inputs[$i] - 1)][1];
+                }
+            }
+
+            return [
+                2 + $offset + $metadatas,
+                $value
+            ];
+        }
     }
 
     private function getMetaSum($start)
@@ -59,8 +97,6 @@ class Eight extends DayClass
             }
             return 2 + $offset + $metadatas;
         }
-
-
     }
 
 }
