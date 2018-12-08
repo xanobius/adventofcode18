@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\TwoEighteen\Eight;
 use App\TwoEighteen\Fifth;
 use App\TwoEighteen\Seventh;
 use App\TwoEighteen\Sixth;
@@ -14,6 +15,7 @@ class Advent2018Controller extends Controller
             '5' => Fifth::class,
             '6' => Sixth::class,
             '7' => Seventh::class,
+            '8' => Eight::class,
         ];
 
         $instance = new $days[$day]();
