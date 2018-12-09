@@ -3,6 +3,7 @@
 namespace App\TwoEighteen;
 
 use App\DayClass;
+use App\TwoEighteen\Classes\Fields;
 
 class Sixth extends DayClass
 {
@@ -19,17 +20,32 @@ class Sixth extends DayClass
     public function primary()
     {
 
-        set_time_limit(120);
-        $this->firstAttempt();
-        return;
+//        set_time_limit(120);
+//        $this->firstAttempt();
+//        return;
 
 
         $inputs = $this->getInput();
-        for ($i = 0; $i < count($inputs); $i++) {
-            $inputs[$i] = explode(',', $inputs[$i]);
-            $inputs[$i][0] = (int)($inputs[$i][0]);
-            $inputs[$i][1] = (int)($inputs[$i][1]);
-        }
+        $this->range = $this->getRange($inputs);
+
+//        $map = [];
+//        for($i = $this->range[1]; $i < $this->range[3]; $i++){
+//            $map[$i] = [];
+//        }
+
+        $cords = collect();
+//
+//        for ($i = 0; $i < count($inputs); $i++) {
+//            $inputs[$i] = explode(',', $inputs[$i]);
+//            $cords->push(
+//                new Fields(
+//                    (int)($inputs[$i][0]),
+//                    (int)($inputs[$i][1]),
+//                    $map
+//                )
+//            );
+//        }
+
 
         $finites = [];
         for($i = 0; $i < count($inputs); $i++){
@@ -44,7 +60,6 @@ class Sixth extends DayClass
 
         dd($finites);
 
-        $this->range = $this->getRange($inputs);
 
 
 
