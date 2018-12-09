@@ -67,7 +67,7 @@ class Ninth extends DayClass
         $start = microtime(true);
 
         return [
-            $this->startListGame(428, 120000),
+            $this->startListGame(428, 720610),
             microtime(true) - $start
         ];
     }
@@ -76,9 +76,7 @@ class Ninth extends DayClass
     {
 
         $scores = [];
-        $cmp = 0; // current marble Position
         $multipleOf = 23;
-        $leftPlaces = 7;
         $cp = 0; // current player
         $currentElement = new LinkedListElement(0);
         for ($i = 1; $i <= $marbles; $i++) {
@@ -98,23 +96,22 @@ class Ninth extends DayClass
                     ->getBefore()
                     ->getBefore();
 
+//                dd($currentElement->getBefore()->getValue());
+
                 $scores[$cp] += $currentElement->getBefore()->getValue() + $i;
                 $currentElement->getBefore()->remove();
             } else {
                 // the normal case
-
-                // Enough space on the left?
-
-                $currentElement->getBefore()->getBefore()->insertAfter(new LinkedListElement($cmp));
-//                if ($cmp < count($gameBoard) - 1) {
-//                    $cmp = $cmp + 2;
-//                } else {
-//                    // Nope? well, index 1
-//                    $cmp = 1;
-//                }
-//                array_splice($gameBoard, $cmp, 0, [$i]);
+                $currentElement = $currentElement->getAfter()->insertAfter($i);
             }
         }
+
+        $max = 0;
+        foreach($scores as $s){
+            $max = $max < $s ? $s : $max;
+        }
+
+        return $max;
     }
 
     private function startGame($players, $marbles, $index = -1)
