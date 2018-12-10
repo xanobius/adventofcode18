@@ -25,10 +25,10 @@ class Ninth extends DayClass
         set_time_limit(60);
 
         // TESTS:
-        print 'TEST 0: ' . ($this->startGame(9, 25) == 32 ? 'SUCCESS' : 'FAILED');
-        print "<br>" . chr(10);
-        print 'TEST 1: ' . ($this->startGame(10, 1618) == 8317 ? 'SUCCESS' : 'FAILED');
-        print "<br>" . chr(10);
+//        print 'TEST 0: ' . ($this->startGame(9, 25) == 32 ? 'SUCCESS' : 'FAILED');
+//        print "<br>" . chr(10);
+//        print 'TEST 1: ' . ($this->startGame(10, 1618) == 8317 ? 'SUCCESS' : 'FAILED');
+//        print "<br>" . chr(10);
 //        print 'TEST 2: ' . ($this->startGame(13, 7999) == 146373 ? 'SUCCESS' : 'FAILED');
 //        print "<br>" . chr(10);
 //        print 'TEST 3: ' . ($this->startGame(17, 1104) == 2764 ? 'SUCCESS' : 'FAILED');
@@ -39,15 +39,26 @@ class Ninth extends DayClass
 //        print "<br>" . chr(10);
 
 
-        return $this->startGame(17, 1104);
+        return $this->startGame(428, 72061);
     }
 
     public function secondary()
     {
+        // last one 100 times larger : 428, 7'206'100
+        // one time  : 409832
+        // two times : 409832
 
+        set_time_limit(120);
+//        return $this->startGame(428, 72061);
+
+        // 241 : 313147 (last item)
+        // max:  409832 -> NOT the last item!
+        return [
+            $this->startGame(428, 100000),
+        ];
     }
 
-    private function startGame($players, $marbles)
+    private function startGame($players, $marbles, $index = -1)
     {
         $gameBoard = [0];
         $scores = [];
@@ -65,17 +76,8 @@ class Ninth extends DayClass
                 if( ! array_key_exists($cp, $scores)){
                     $scores[$cp] = 0;
                 }
-                $scores[$cp] += $multipleOf;
+                $scores[$cp] += $i;
                 $cmp = $cmp - $leftPlaces;
-
-//                if($cmp < 0 ){
-//                    dd([
-//                        'cmp' => $cmp,
-//                        'gameBoard' => count($gameBoard),
-//                        'newCmp' => count($gameBoard) + $cmp
-//                    ]);
-//                    $cmp = count($gameBoard) + $cmp;
-//                }
                 $cmp = $cmp >= 0 ? $cmp : count($gameBoard) + $cmp;
                 $scores[$cp] += $gameBoard[$cmp];
                 array_splice($gameBoard, $cmp, 1);
@@ -94,12 +96,16 @@ class Ninth extends DayClass
 
         }
 
-        $max = 0;
-        foreach($scores as $s){
-            $max = $max < $s ? $s : $max;
-        }
+        if($index == -1){
+            $max = 0;
+            foreach($scores as $s){
+                $max = $max < $s ? $s : $max;
+            }
 
-        return $max;
+            return $max;
+        }else{
+            return $scores[$index];
+        }
     }
 
 }
