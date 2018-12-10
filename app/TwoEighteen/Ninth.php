@@ -3,6 +3,9 @@
 namespace App\TwoEighteen;
 
 use App\DayClass;
+use App\TwoEighteen\Classes\LinkedListElement;
+use phpDocumentor\Reflection\DocBlock\Tags\Link;
+use Symfony\Component\Console\Command\ListCommand;
 
 class Ninth extends DayClass
 {
@@ -39,7 +42,11 @@ class Ninth extends DayClass
 //        print "<br>" . chr(10);
 
 
-        return $this->startGame(428, 72061);
+        $start = microtime(true);
+        return [
+            'Result: ' . $this->startGame(428, 72061),
+            'Runtime: ' . microtime(true) - $start
+        ];
     }
 
     public function secondary()
@@ -53,9 +60,61 @@ class Ninth extends DayClass
 
         // 241 : 313147 (last item)
         // max:  409832 -> NOT the last item!
+
+        // 100k : 65 secs
+        // 110k : 82 secs
+        // 120k : 98 secs /wo score : 97 secs ... no win (RES: 1'072'021)
+        $start = microtime(true);
+
         return [
-            $this->startGame(428, 100000),
+            $this->startListGame(428, 120000),
+            microtime(true) - $start
         ];
+    }
+
+    private function startListGame($players, $marbles, $index = -1)
+    {
+
+        $scores = [];
+        $cmp = 0; // current marble Position
+        $multipleOf = 23;
+        $leftPlaces = 7;
+        $cp = 0; // current player
+        $currentElement = new LinkedListElement(0);
+        for ($i = 1; $i <= $marbles; $i++) {
+            $cp = $cp == $players ? 1 : $cp + 1;
+            // place marble
+            if ($i % $multipleOf == 0) {
+                // the special case!
+                if( ! array_key_exists($cp, $scores)){
+                    $scores[$cp] = 0;
+                }
+
+                $currentElement = $currentElement
+                    ->getBefore()
+                    ->getBefore()
+                    ->getBefore()
+                    ->getBefore()
+                    ->getBefore()
+                    ->getBefore();
+
+                $scores[$cp] += $currentElement->getBefore()->getValue() + $i;
+                $currentElement->getBefore()->remove();
+            } else {
+                // the normal case
+
+                // Enough space on the left?
+
+                $currentElement->getBefore()->getBefore()->insertAfter(new LinkedListElement($cmp));
+//                if ($cmp < count($gameBoard) - 1) {
+//                    $cmp = $cmp + 2;
+//                } else {
+//                    // Nope? well, index 1
+//                    $cmp = 1;
+//                }
+//                array_splice($gameBoard, $cmp, 0, [$i]);
+            }
+        }
     }
 
     private function startGame($players, $marbles, $index = -1)
