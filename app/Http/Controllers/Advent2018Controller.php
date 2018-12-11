@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\TwoEighteen\Eight;
+use App\TwoEighteen\Eleventh;
 use App\TwoEighteen\Fifth;
 use App\TwoEighteen\Ninth;
 use App\TwoEighteen\Seventh;
@@ -19,7 +20,8 @@ class Advent2018Controller extends Controller
             '7' => Seventh::class,
             '8' => Eight::class,
             '9' => Ninth::class,
-            '10' => Tenth::class
+            '10' => Tenth::class,
+            '11' => Eleventh::class
         ];
 
         $instance = new $days[$day]();
