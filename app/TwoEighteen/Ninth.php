@@ -52,22 +52,14 @@ class Ninth extends DayClass
     public function secondary()
     {
         // last one 100 times larger : 428, 7'206'100
-        // one time  : 409832
-        // two times : 409832
-
+        // second solution: 3469562780, takes 50 seconds
+        // first solution : 409832
+        ini_set('memory_limit', '1G');
         set_time_limit(120);
-//        return $this->startGame(428, 72061);
-
-        // 241 : 313147 (last item)
-        // max:  409832 -> NOT the last item!
-
-        // 100k : 65 secs
-        // 110k : 82 secs
-        // 120k : 98 secs /wo score : 97 secs ... no win (RES: 1'072'021)
+        gc_disable();
         $start = microtime(true);
-
         return [
-            $this->startListGame(428, 720610),
+            $this->startListGame(428, 7206100),
             microtime(true) - $start
         ];
     }

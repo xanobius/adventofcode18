@@ -6,6 +6,7 @@ use App\TwoEighteen\Fifth;
 use App\TwoEighteen\Ninth;
 use App\TwoEighteen\Seventh;
 use App\TwoEighteen\Sixth;
+use App\TwoEighteen\Tenth;
 
 class Advent2018Controller extends Controller
 {
@@ -18,6 +19,7 @@ class Advent2018Controller extends Controller
             '7' => Seventh::class,
             '8' => Eight::class,
             '9' => Ninth::class,
+            '10' => Tenth::class
         ];
 
         $instance = new $days[$day]();

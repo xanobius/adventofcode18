@@ -17,4 +17,7 @@ class DayClass
         return $lines;
     }
 
+    public function primary(){}
+    public function secondary(){}
+
 }
