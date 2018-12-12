@@ -29,7 +29,7 @@ class Twelveth extends DayClass
 
 
 
-        $generations = 155;
+        $generations = 20;
         $current = new Plant(0 - $generations - 1);
         for($i = 0 - $generations; $i < 0; $i++){
             $current = $current->insertRight($i);
@@ -54,12 +54,12 @@ class Twelveth extends DayClass
             while($point = $point->getRight()){
                 $point->grow();
             }
-            print $this->getTotal($first) . chr(10);
+            print $this->printLine($first);
         }
 
         // Calc result
         $total = $this->getTotal($first);
-        return $total;
+        return chr(10) . 'Result: ' . $total;
     }
 
     public function secondary()
