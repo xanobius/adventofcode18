@@ -15,25 +15,30 @@ class Rail
      */
     private $y;
 
-    /**
-     * @var Rail
+    /*
+     * @var bool
      */
-    private $north;
+    private $occupied = false;
 
     /**
      * @var Rail
      */
-    private $west;
+    private $north = null;
 
     /**
      * @var Rail
      */
-    private $south;
+    private $west = null;
 
     /**
      * @var Rail
      */
-    private $east;
+    private $south = null;
+
+    /**
+     * @var Rail
+     */
+    private $east = null;
 
 
     /**
@@ -52,6 +57,11 @@ class Rail
     public function isOnPosition($x, $y)
     {
         return $x == $this->x && $y == $this->y;
+    }
+
+    public function isCrossing()
+    {
+        return $this->getWest() && $this->getNorth() && $this->getSouth() && $this->getNorth();
     }
 
     /**
@@ -91,11 +101,27 @@ class Rail
     }
 
     /**
-     * @return Rail
+     * @return bool
      */
-    public function getNorth(): Rail
+    public function isOccupied(): bool
     {
-        return $this->north;
+        return $this->occupied;
+    }
+
+    /**
+     * @param bool $occupied
+     */
+    public function setOccupied(bool $occupied): void
+    {
+        $this->occupied = $occupied;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNorth()
+    {
+        return $this->north ?? false;
     }
 
     /**
@@ -112,11 +138,11 @@ class Rail
     }
 
     /**
-     * @return Rail
+     * @return mixed
      */
-    public function getWest(): Rail
+    public function getWest()
     {
-        return $this->west;
+        return $this->west ?? false;
     }
 
     /**
@@ -133,11 +159,11 @@ class Rail
     }
 
     /**
-     * @return Rail
+     * @return mixed
      */
-    public function getSouth(): Rail
+    public function getSouth()
     {
-        return $this->south;
+        return $this->south ?? false;
     }
 
     /**
@@ -154,11 +180,11 @@ class Rail
     }
 
     /**
-     * @return Rail
+     * @return mixed
      */
-    public function getEast(): Rail
+    public function getEast()
     {
-        return $this->east;
+        return $this->east ?? false;
     }
 
     /**

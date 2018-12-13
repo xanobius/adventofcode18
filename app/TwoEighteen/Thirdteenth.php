@@ -19,8 +19,75 @@ class Thirdteenth extends DayClass
     {
         ini_set('memory_limit', '1G');
         set_time_limit(240);
+
         $start = microtime(true);
         $this->parseRailway();
+        $carCount = $this->carts->count();
+
+
+        print $this->carts->map(function (Cart $cart) {
+            return $cart->getField()->getX() . '/' . $cart->getField()->getY();
+        })->implode(' - ');
+        print chr(10);
+
+
+        $counter = 0;
+
+        $crashField = false;
+
+//        while ($this->carts->groupBy(function (Cart $cart) {
+//                return $cart->getField()->getX() . '-' . $cart->getField()->getY();
+//            })->count() == $carCount) {
+//        while($crashField == false){
+        for($i = 0; $i < 10000; $i++){
+            $this->carts = $this->carts
+                ->sort(function(Cart $ca, Cart $cb){
+                    return $ca->getField()->getY() == $cb->getField()->getY() ?
+                        $ca->getField()->getX() - $cb->getField()->getX() :
+                        $ca->getField()->getY() - $cb->getField()->getY();
+                });
+
+//            print $this->carts->map(function (Cart $cart) {
+//                return $cart->getField()->getX() . '/' . $cart->getField()->getY();
+//            })->implode(' - ');
+//            print chr(10);
+
+            $ref = $this;
+            $this->carts->each(function (Cart $c) use ($ref){
+                    $crashField = $c->move();
+
+                    if($crashField !== false){
+                        print "Crash on field " . $crashField->getX() . '/' . $crashField->getY() . chr(10);
+                    }
+                });
+
+//            print $this->carts->map(function (Cart $cart) {
+//                return $cart->getField()->getX() . '/' . $cart->getField()->getY();
+//            })->implode(' - ');
+//
+//            print chr(10);
+            $counter++;
+        }
+
+        print chr(10);
+        print "Collision after " . $counter . " rounds";
+        print chr(10);
+        print "Crash on field: " . $crashField->getX() . '/'  . $crashField->getY();
+        print chr(10);
+
+//        print 'Field: ' . $this->carts->groupBy(function (Cart $cart) {
+//                return $cart->getField()->getX() . '-' . $cart->getField()->getY();
+//            })->map(function ($a, $b) {
+//                return [
+//                    'name' => $b,
+//                    'count' => count($a)
+//                ];
+//            })->filter(function ($a) {
+//                return $a['count'] > 1;
+//            })->first()['name'];
+
+        print chr(10);
+
         /**
          * Building Railsystem with original strategy: 190 secs
          * New Method: (Last Line Copying) : 0.22 secs
@@ -39,6 +106,9 @@ class Thirdteenth extends DayClass
     private function parseRailway()
     {
         $inputs = $this->getInput();
+
+//        dd($inputs);
+
         $this->rails = collect();
         $this->carts = collect();
 
@@ -60,19 +130,19 @@ class Thirdteenth extends DayClass
          */
 
 
-        for($y = 0; $y < count($inputs); $y++){
+        for ($y = 0; $y < count($inputs); $y++) {
             $currentRow = [];
-            for($x = 0; $x < strlen($inputs[$y]); $x++){
-                switch($inputs[$y][$x]){
+            for ($x = 0; $x < strlen($inputs[$y]); $x++) {
+                switch ($inputs[$y][$x]) {
                     case '/':
-                            // top start?
-                        if($prev != null){
+                        // top start?
+                        if ($prev != null) {
                             $r = new Rail($x, $y);
                             $r->setWest($prev, true);
                             $r->setNorth($prevRow[$x], true
                             );
                             $prev = null;
-                        }else{
+                        } else {
                             $r = new Rail($x, $y);
                             $prev = $r;
                         }
@@ -80,13 +150,13 @@ class Thirdteenth extends DayClass
                         $currentRow[$x] = $r;
                         break;
                     case '\\':
-                            // bottom start?
-                        if($prev == null){
+                        // bottom start?
+                        if ($prev == null) {
                             $r = new Rail($x, $y);
                             $r->setNorth($prevRow[$x], true
-                                );
+                            );
                             $prev = $r;
-                        }else{
+                        } else {
                             $r = new Rail($x, $y);
                             $r->setWest($prev, true);
                             $prev = null;
@@ -94,14 +164,18 @@ class Thirdteenth extends DayClass
                         $this->rails->push($r);
                         $currentRow[$x] = $r;
                         break;
-                    case '-':case '<':case '>':
+                    case '-':
+                    case '<':
+                    case '>':
                         $r = new Rail($x, $y);
                         $r->setWest($prev, true);
                         $prev = $r;
                         $this->rails->push($r);
                         $currentRow[$x] = $r;
                         break;
-                    case '|':case '^':case 'v' :
+                    case '|':
+                    case '^':
+                    case 'v' :
                         $r = new Rail($x, $y);
 
                         $r->setNorth($prevRow[$x], true
@@ -118,19 +192,61 @@ class Thirdteenth extends DayClass
                         $this->rails->push($r);
                         $currentRow[$x] = $r;
                         break;
-                    case '': default:
+                    case '':
+                    default:
                 }
 
 
-                if(in_array($inputs[$y][$x], $sings)){
+                if (in_array($inputs[$y][$x], $sings)) {
                     $c = new Cart($r, array_search($inputs[$y][$x], $sings));
                     $this->carts->push($c);
                 }
             }
+//            dd($this->rails->last());
             $prevRow = $currentRow;
             unset($currentRow);
         }
 
+    }
+
+
+
+
+    /**
+     * @param $testRounds
+     */
+    private function doTestRounds($testRounds, $carCount): void
+    {
+        for ($i = 0; $i < $testRounds; $i++) {
+
+            $this->carts->each(function (Cart $c) {
+                $c->move();
+            });
+            print $this->carts->map(function (Cart $cart) {
+                return $cart->getField()->getX() . '/' . $cart->getField()->getY();
+            })->implode(' - ');
+
+
+            print chr(10);
+
+            if( $this->carts->groupBy(function (Cart $cart) {
+                    return $cart->getField()->getX() . '-' . $cart->getField()->getY();
+                })->count() != $carCount) {
+                print "Collision happened";
+                print chr(10);
+            }
+
+        }
+    }
+
+    private function runSingleCart($steps): void
+    {
+        $myCar = $this->carts->last();
+        for ($i = 0; $i < $steps; $i++) {
+            $myCar->move();
+            print $myCar->getField()->getX() . '/' . $myCar->getField()->getY();
+            print chr(10);
+        }
     }
 
 
