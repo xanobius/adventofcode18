@@ -8,6 +8,7 @@ use App\TwoEighteen\Ninth;
 use App\TwoEighteen\Seventh;
 use App\TwoEighteen\Sixth;
 use App\TwoEighteen\Tenth;
+use App\TwoEighteen\Thirdteenth;
 use App\TwoEighteen\Twelveth;
 
 class Advent2018Controller extends Controller
@@ -23,7 +24,8 @@ class Advent2018Controller extends Controller
             '9' => Ninth::class,
             '10' => Tenth::class,
             '11' => Eleventh::class,
-            '12' => Twelveth::class
+            '12' => Twelveth::class,
+            '13' => Thirdteenth::class,
         ];
 
         $instance = new $days[$day]();
