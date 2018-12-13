@@ -23,6 +23,7 @@ class Thirdteenth extends DayClass
         $this->parseRailway();
         /**
          * Building Railsystem with original strategy: 190 secs
+         * New Method: (Last Line Copying) : 0.22 secs
          *
          */
         return [
@@ -44,30 +45,31 @@ class Thirdteenth extends DayClass
         $sings = ['^', '<', 'v', '>'];
 
         $prev = null;
+        $prevRow = null;
+        $currentRow = null;
 
         /*
-         * Optimizing Ideas:
+         * Optimizing Idea
          * Cache the previous row:
          *  Only top elements have to be searched and those
-         * are ALWAYS in the previous line.
-         * So PHP would have to crawl the hole rail-net
+         *  are ALWAYS in the previous line.
+         *  So PHP would have to crawl the hole rail-net
          *
+         * Result:
+         *  From 190 secs to under 0.3 secs. Profit!
          */
 
 
         for($y = 0; $y < count($inputs); $y++){
+            $currentRow = [];
             for($x = 0; $x < strlen($inputs[$y]); $x++){
-//                print $x . "/" . $y . "(" . $inputs[$y][$x] . "); ";
                 switch($inputs[$y][$x]){
                     case '/':
                             // top start?
                         if($prev != null){
                             $r = new Rail($x, $y);
                             $r->setWest($prev, true);
-                            $r->setNorth(
-                                $this->rails->filter(function(Rail $rail) use ($x, $y){
-                                    return $rail->isOnPosition($x,$y - 1);
-                                })->first(), true
+                            $r->setNorth($prevRow[$x], true
                             );
                             $prev = null;
                         }else{
@@ -75,14 +77,13 @@ class Thirdteenth extends DayClass
                             $prev = $r;
                         }
                         $this->rails->push($r);
+                        $currentRow[$x] = $r;
                         break;
                     case '\\':
                             // bottom start?
                         if($prev == null){
                             $r = new Rail($x, $y);
-                            $r->setNorth($this->rails->filter(function(Rail $rail) use ($x, $y){
-                                        return $rail->isOnPosition($x,$y - 1);
-                                    })->first(), true
+                            $r->setNorth($prevRow[$x], true
                                 );
                             $prev = $r;
                         }else{
@@ -91,42 +92,43 @@ class Thirdteenth extends DayClass
                             $prev = null;
                         }
                         $this->rails->push($r);
+                        $currentRow[$x] = $r;
                         break;
                     case '-':case '<':case '>':
                         $r = new Rail($x, $y);
                         $r->setWest($prev, true);
                         $prev = $r;
                         $this->rails->push($r);
+                        $currentRow[$x] = $r;
                         break;
                     case '|':case '^':case 'v' :
                         $r = new Rail($x, $y);
 
-                        $r->setNorth(
-                            $this->rails->filter(function(Rail $rail) use ($x, $y){
-                                return $rail->isOnPosition($x,$y - 1);
-                            })->first(), true
+                        $r->setNorth($prevRow[$x], true
                         );
                         $this->rails->push($r);
+                        $currentRow[$x] = $r;
                         break;
                     case '+':
                         $r = new Rail($x, $y);
                         $r->setWest($prev, true);
-                        $r->setNorth(
-                            $this->rails->filter(function(Rail $rail) use ($x, $y){
-                                return $rail->isOnPosition($x,$y - 1);
-                            })->first(), true
+                        $r->setNorth($prevRow[$x], true
                         );
                         $prev = $r;
                         $this->rails->push($r);
+                        $currentRow[$x] = $r;
                         break;
                     case '': default:
                 }
+
 
                 if(in_array($inputs[$y][$x], $sings)){
                     $c = new Cart($r, array_search($inputs[$y][$x], $sings));
                     $this->carts->push($c);
                 }
             }
+            $prevRow = $currentRow;
+            unset($currentRow);
         }
 
     }
