@@ -22,6 +22,12 @@ class Cart
 
     public function move()
     {
+
+        if($this->field->isCrash()){
+            // dont move, shit hits the fan!
+            return false;
+        }
+
         switch ($this->flowDirection){
             case 0:
                 if($this->field->getNorth()){
@@ -80,6 +86,9 @@ class Cart
         }
 
         if($destField->isOccupied()){
+            $this->field->setOccupied(false);
+            $this->setField($destField);
+            $destField->setCrash(true);
             return $destField;
 //            die('Collision on ' . $destField->getX() . '/' . $destField->getY());
         }else{

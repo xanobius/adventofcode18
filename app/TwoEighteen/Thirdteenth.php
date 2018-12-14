@@ -10,6 +10,7 @@ class Thirdteenth extends DayClass
 {
 
 //    protected $filepath = '2018/day_13.example.txt';
+//    protected $filepath = '2018/day_13_2.example.txt';
     protected $filepath = '2018/day_13.txt';
 
     protected $rails;
@@ -22,24 +23,30 @@ class Thirdteenth extends DayClass
 
         $start = microtime(true);
         $this->parseRailway();
-        $carCount = $this->carts->count();
 
 
-        print $this->carts->map(function (Cart $cart) {
-            return $cart->getField()->getX() . '/' . $cart->getField()->getY();
-        })->implode(' - ');
-        print chr(10);
+//        $this->carts->each(function(Cart $c){
+//            $c->getField()->setOccupied(false);
+//        });
+//
+//        $this->runSingleCart($this->carts[8], 4162 );
+//        return;
 
+//        print $this->carts->map(function (Cart $cart) {
+//            return $cart->getField()->getX() . '/' . $cart->getField()->getY();
+//        })->implode(' - ');
+//        print chr(10);
 
-        $counter = 0;
-
-        $crashField = false;
 
 //        while ($this->carts->groupBy(function (Cart $cart) {
-//                return $cart->getField()->getX() . '-' . $cart->getField()->getY();
-//            })->count() == $carCount) {
-//        while($crashField == false){
-        for($i = 0; $i < 10000; $i++){
+////                return $cart->getField()->getX() . '-' . $cart->getField()->getY();
+////            })->count() == $carCount) {
+////        while($crashField == false){
+///
+
+        $counter = 0;
+        while($this->carts->count() > 1){
+//        for($i = 0; $i < 10000; $i++){
             $this->carts = $this->carts
                 ->sort(function(Cart $ca, Cart $cb){
                     return $ca->getField()->getY() == $cb->getField()->getY() ?
@@ -47,52 +54,60 @@ class Thirdteenth extends DayClass
                         $ca->getField()->getY() - $cb->getField()->getY();
                 });
 
-//            print $this->carts->map(function (Cart $cart) {
-//                return $cart->getField()->getX() . '/' . $cart->getField()->getY();
-//            })->implode(' - ');
-//            print chr(10);
-
-            $ref = $this;
-            $this->carts->each(function (Cart $c) use ($ref){
+            $delete_list = [];
+            $this->carts->each(function (Cart $c, $index) use (&$delete_list){
                     $crashField = $c->move();
-
                     if($crashField !== false){
+                        $delete_list[] = $crashField;
                         print "Crash on field " . $crashField->getX() . '/' . $crashField->getY() . chr(10);
                     }
                 });
 
-//            print $this->carts->map(function (Cart $cart) {
-//                return $cart->getField()->getX() . '/' . $cart->getField()->getY();
-//            })->implode(' - ');
-//
-//            print chr(10);
+            if(count($delete_list)){
+                print "Collision found after " . $counter . " ticks. Remove Items" . chr(10);
+
+                $this->carts->forget(array_keys($this->carts->filter(function(Cart $cart) use ($delete_list) {
+                    foreach($delete_list as $cord){
+                        if($cart->getField()->getX() == $cord->getX() && $cart->getField()->getY() == $cord->getY()){
+                            return true;
+                        }
+                    }
+                    return false;
+                })->toArray()));
+
+                foreach($delete_list as $field){
+                    $field->setCrash(false);
+                    $field->setOccupied(false);
+
+//                    dd($this->rails->filter(function($r){ return $r->isOccupied() || $r->isCrash(); }));
+                }
+
+                print "Remaining carts: " . $this->carts->count() . chr(10);
+
+                if($this->carts->count() == 1){
+                    // Wrong: 111,111
+                    // Wrong: 111, 99
+                    // Wrong: 111,100
+                    // Wrong: 112,99
+
+//                    $this->carts->first()->move();
+//                    $this->carts->first()->move();
+
+
+                    print "Only one card remaining after " . $counter . " , on field: " .
+                        $this->carts->first()->getField()->getX() . '/' .
+                        $this->carts->first()->getField()->getY() . chr(10);
+                }
+
+            }
             $counter++;
         }
 
         print chr(10);
         print "Collision after " . $counter . " rounds";
         print chr(10);
-        print "Crash on field: " . $crashField->getX() . '/'  . $crashField->getY();
-        print chr(10);
+//        print "Crash on field: " . $crashField->getX() . '/'  . $crashField->getY();
 
-//        print 'Field: ' . $this->carts->groupBy(function (Cart $cart) {
-//                return $cart->getField()->getX() . '-' . $cart->getField()->getY();
-//            })->map(function ($a, $b) {
-//                return [
-//                    'name' => $b,
-//                    'count' => count($a)
-//                ];
-//            })->filter(function ($a) {
-//                return $a['count'] > 1;
-//            })->first()['name'];
-
-        print chr(10);
-
-        /**
-         * Building Railsystem with original strategy: 190 secs
-         * New Method: (Last Line Copying) : 0.22 secs
-         *
-         */
         return [
             'time elapsed : ' . (microtime(true) - $start)
         ];
@@ -210,8 +225,6 @@ class Thirdteenth extends DayClass
     }
 
 
-
-
     /**
      * @param $testRounds
      */
@@ -239,9 +252,8 @@ class Thirdteenth extends DayClass
         }
     }
 
-    private function runSingleCart($steps): void
+    private function runSingleCart(Cart $myCar, $steps): void
     {
-        $myCar = $this->carts->last();
         for ($i = 0; $i < $steps; $i++) {
             $myCar->move();
             print $myCar->getField()->getX() . '/' . $myCar->getField()->getY();

@@ -15,10 +15,15 @@ class Rail
      */
     private $y;
 
-    /*
+    /**
      * @var bool
      */
     private $occupied = false;
+
+    /**
+     * @var bool
+     */
+    private $crash = false;
 
     /**
      * @var Rail
@@ -114,6 +119,22 @@ class Rail
     public function setOccupied(bool $occupied): void
     {
         $this->occupied = $occupied;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCrash(): bool
+    {
+        return $this->crash;
+    }
+
+    /**
+     * @param bool $crash
+     */
+    public function setCrash(bool $crash): void
+    {
+        $this->crash = $crash;
     }
 
     /**
