@@ -24,28 +24,8 @@ class Sixth extends DayClass
 //        $this->firstAttempt();
 //        return;
 
-
         $inputs = $this->getInput();
         $this->range = $this->getRange($inputs);
-
-//        $map = [];
-//        for($i = $this->range[1]; $i < $this->range[3]; $i++){
-//            $map[$i] = [];
-//        }
-
-        $cords = collect();
-//
-//        for ($i = 0; $i < count($inputs); $i++) {
-//            $inputs[$i] = explode(',', $inputs[$i]);
-//            $cords->push(
-//                new Fields(
-//                    (int)($inputs[$i][0]),
-//                    (int)($inputs[$i][1]),
-//                    $map
-//                )
-//            );
-//        }
-
 
         $finites = [];
         for($i = 0; $i < count($inputs); $i++){
@@ -56,7 +36,6 @@ class Sixth extends DayClass
                 ];
             }
         }
-
 
         dd($finites);
 
@@ -171,6 +150,7 @@ class Sixth extends DayClass
     {
 
         $start = microtime(true);
+
 
         $inputs = $this->getInput();
         for ($i = 0; $i < count($inputs); $i++) {
